@@ -37,24 +37,29 @@ A session travels through **4 locations** — understanding the handoffs matters
 chrome.tabs events
   → background.js (filters by is_recording flag)
   → chrome.storage.local (session_log array)
-  → app.js reads + POSTs to backend
-  → web/app/api/analyze/route.ts compresses + calls Claude
+  → popup.js or app.js sends {cmd: "stop-and-analyze"} to background
+  → background.js POSTs to web/app/api/analyze/route.ts
+  → route.ts compresses + calls Claude
   → response parsed, stored back in chrome.storage.local (analysis_result)
-  → app.js renders workflow cards (live via storage.onChanged)
+  → popup.js + app.js react via chrome.storage.onChanged
 ```
 
-**Storage keys in `chrome.storage.local`** (all read/written by both `background.js` and `app.js`):
+**Storage keys in `chrome.storage.local`** (read/written by `background.js`, `popup.js`, and `app.js`):
 - `is_recording` — boolean, gates background.js event logging
 - `session_log` — array of `SessionEvent`
 - `analysis_result` — Claude's parsed JSON response
 - `view_state` — `idle` / `recording` / `analyzing` / `results` / `error`
 - `last_error` — error message for the error view
 
-The app tab re-reads storage on load and reacts to `chrome.storage.onChanged` so state stays live even if the background worker writes while the tab is in the foreground. The state machine is in `app.js` (`route()` function).
+Popup + app tab both re-read storage on open and react to `chrome.storage.onChanged`, so the three surfaces (popup, app tab, background worker) stay in sync. State machines in `popup.js` and `app.js` both live in their own `route()` function; the background worker's `performAnalysis()` is what flips `view_state` through analyzing → results/error.
 
-### The extension UI is a full tab, not a popup
+### Two UI surfaces + one background worker
 
-The toolbar action has no `default_popup`. Clicking the icon fires `chrome.action.onClicked` in `background.js`, which opens (or focuses) a single `chrome-extension://<id>/app.html` tab. The tab is meant to be pinned — recording runs in the background service worker regardless of whether the tab is visible. A `REC` badge on the toolbar icon reflects `is_recording` so the user knows a session is active even without opening the tab.
+- **Popup** (`popup.html`, 300px wide) — minimal Start / Stop toggle, event counter, and "Open Echooo tab →" shortcut. Popup closes whenever the user clicks away, so it can't own long-running work.
+- **App tab** (`app.html`, full page) — idle hero, live recording view, analyzing spinner, and the results grid with workflow cards, Copy-Claude-prompt buttons, and markdown export.
+- **Background service worker** (`background.js`) — owns tab event capture AND the analyze fetch. Popup / app both trigger analysis by sending `chrome.runtime.sendMessage({ cmd: "stop-and-analyze" })`; `performAnalysis()` flips `view_state` so both surfaces animate through the same state machine. `cmd: "open-app"` opens or focuses the app tab.
+
+A `REC` badge on the toolbar icon mirrors `is_recording` so the session is visible even when nothing's open.
 
 ### Server-side event compression is load-bearing
 
@@ -66,7 +71,7 @@ Change these thresholds carefully — the demo fixture (`extension/fixtures/demo
 
 ### The JSON schema contract
 
-`web/lib/prompts.ts` defines `ANALYSIS_SCHEMA` (what Claude must return) and `app.js` renders fields from that schema directly. The two files must stay in sync:
+`web/lib/prompts.ts` defines `ANALYSIS_SCHEMA` (what Claude must return) and `app.js` renders fields from that schema directly (popup doesn't touch the schema — it only shows state). The two files must stay in sync:
 - Workflow cards read `name`, `occurrences`, `avg_duration_min`, `steps[]`, `ai_leverage[]`, `inferred_rules[]`, `ready_prompt`.
 - `ai_leverage[].verdict` must be one of `automatable` / `deterministic` / `judgment` — CSS classes `.verdict-automatable` etc. in `app.css` are keyed to these strings.
 
@@ -78,7 +83,7 @@ Extensions have origin `chrome-extension://<id>/` — the backend sets `Access-C
 
 ### The `BACKEND_URL` constant
 
-Top of `extension/app.js`. After each Vercel deploy, this must be updated to the production URL. During local dev, leave it at `http://localhost:3000/api/analyze` and run `npm run dev`.
+Top of `extension/background.js` (the worker owns the analyze fetch, so this is the one place that needs to know the URL). After each Vercel deploy, update it to the production URL. During local dev, leave it at `http://localhost:3000/api/analyze` and run `npm run dev`.
 
 ### Vercel framework detection
 

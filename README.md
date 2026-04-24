@@ -34,9 +34,10 @@ The context an LLM needs is already in *what people do*. Watch the work, and bot
 │  background.js          │────────▶│  POST /api/analyze       │
 │    tab event logger     │   JSON  │    │                     │
 │                         │         │    ▼                     │
-│  app.html/js            │         │  Anthropic SDK           │
-│    full-tab UI,         │         │  claude-sonnet-4-6       │
-│    start/stop/analyze   │         │                          │
+│  popup.html/js          │         │  Anthropic SDK           │
+│    Start / Stop toggle  │         │  claude-sonnet-4-6       │
+│  app.html/js            │         │                          │
+│    full-tab SOP view    │         │                          │
 │                         │◀────────│    │                     │
 │  chrome.storage.local   │   JSON  │    ▼                     │
 │    session log          │         │  Structured JSON reply   │
@@ -65,9 +66,9 @@ Copy the deployed URL (e.g. `https://echooo-xyz.vercel.app`).
 
 ### Extension
 
-1. Open `extension/app.js` and set `BACKEND_URL` to `https://<your-vercel-url>/api/analyze` (top of the file).
+1. Open `extension/background.js` and set `BACKEND_URL` to `https://<your-vercel-url>/api/analyze` (top of the file).
 2. Open Chrome → `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the `extension/` folder.
-3. Click the Echooo toolbar icon — it opens a full-tab app. Hit **Start session**, pin the tab, work normally across other tabs, then come back and **Stop & Analyze**. A `REC` badge on the toolbar icon confirms a session is active.
+3. Click the Echooo toolbar icon — a small popup opens with **Start session** / **Stop & Analyze**. A `REC` badge on the toolbar icon confirms a session is active. Hit **Open Echooo tab →** any time to see the full SOP view (workflow cards + Copy-prompt buttons + markdown export).
 
 **For a reliable demo without live capture:** click **Load demo fixture** on the idle screen — it loads a hand-crafted session log showing refund processing, customer onboarding, and standup prep workflows.
 
@@ -78,7 +79,8 @@ echooo/
 ├── extension/               # Chrome extension (MV3, vanilla JS)
 │   ├── manifest.json
 │   ├── background.js        # tab event listener → chrome.storage.local
-│   ├── app.{html,css,js}    # full-tab UI: idle / recording / analyzing / results / error
+│   ├── popup.{html,css,js}  # compact Start / Stop toggle
+│   ├── app.{html,css,js}    # full-tab SOP view: idle / recording / analyzing / results / error
 │   ├── icons/
 │   └── fixtures/demo-session.json
 ├── web/                     # Next.js backend (single API route)

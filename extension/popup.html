@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <header class="popup-head">
+        <span class="mark">🪞</span>
+        <div>
+          <div class="brand">Echooo</div>
+          <div class="sub">Your AI-adoption buddy.</div>
+        </div>
+      </header>
+
+      <section class="popup-view" data-view="idle" hidden>
+        <p class="hint">Start a session — keep working in other tabs and Echooo will watch your workflow in the background.</p>
+        <button id="start-btn" class="btn btn-primary btn-block">Start session</button>
+      </section>
+
+      <section class="popup-view" data-view="recording" hidden>
+        <div class="rec-card">
+          <div class="rec-row">
+            <span class="pulse"></span>
+            <span class="rec-text">Recording</span>
+          </div>
+          <div class="counter">
+            <span id="counter">0</span>
+            <span class="counter-label">events</span>
+          </div>
+        </div>
+        <button id="stop-btn" class="btn btn-stop btn-block">Stop &amp; Analyze</button>
+      </section>
+
+      <section class="popup-view" data-view="analyzing" hidden>
+        <div class="center-row">
+          <span class="spinner"></span>
+          <span>Analyzing your session…</span>
+        </div>
+        <p class="hint subtle">Claude is reading the log. Open the Echooo tab to watch progress.</p>
+      </section>
+
+      <section class="popup-view" data-view="results" hidden>
+        <p class="hint"><strong>Results ready.</strong> Open the Echooo tab to see the SOPs and Claude prompts.</p>
+        <button id="new-session-btn" class="btn btn-ghost btn-block">Start new session</button>
+      </section>
+
+      <section class="popup-view" data-view="error" hidden>
+        <p class="hint error">Something went wrong — open the Echooo tab for details.</p>
+        <button id="err-reset-btn" class="btn btn-ghost btn-block">Reset</button>
+      </section>
+
+      <footer class="popup-foot">
+        <button id="open-app-btn" class="btn btn-link">Open Echooo tab →</button>
+      </footer>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

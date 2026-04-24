@@ -1,6 +1,5 @@
 // Echooo app page — full-tab UI driven by chrome.storage.local state.
-
-const BACKEND_URL = "https://echooo-chi.vercel.app/api/analyze";
+// The analyze fetch lives in background.js (single source of truth).
 
 const STORAGE_KEYS = {
   IS_RECORDING: "is_recording",
@@ -184,39 +183,10 @@ async function startSession() {
 }
 
 async function stopAndAnalyze() {
-  await setState({
-    [STORAGE_KEYS.IS_RECORDING]: false,
-    [STORAGE_KEYS.VIEW]: VIEWS.ANALYZING,
-  });
-  await route();
-
-  const { [STORAGE_KEYS.SESSION_LOG]: log = [] } = await chrome.storage.local.get(
-    STORAGE_KEYS.SESSION_LOG,
-  );
-
-  try {
-    const res = await fetch(BACKEND_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_log: log }),
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Backend ${res.status}: ${text.slice(0, 300)}`);
-    }
-    const data = await res.json();
-    await setState({
-      [STORAGE_KEYS.ANALYSIS]: data,
-      [STORAGE_KEYS.VIEW]: VIEWS.RESULTS,
-    });
-  } catch (err) {
-    console.error("Analyze failed:", err);
-    await setState({
-      [STORAGE_KEYS.ERROR]: err.message || String(err),
-      [STORAGE_KEYS.VIEW]: VIEWS.ERROR,
-    });
-  }
-  await route();
+  // Delegate the fetch to the background service worker so it isn't bound
+  // to this tab's lifecycle. UI state updates will come back via
+  // chrome.storage.onChanged → route().
+  await chrome.runtime.sendMessage({ cmd: "stop-and-analyze" });
 }
 
 async function resetToIdle() {
@@ -241,7 +211,7 @@ async function loadFixture() {
       [STORAGE_KEYS.ANALYSIS]: null,
       [STORAGE_KEYS.ERROR]: null,
     });
-    await stopAndAnalyze();
+    await chrome.runtime.sendMessage({ cmd: "stop-and-analyze" });
   } catch (err) {
     console.error("Fixture load failed:", err);
     await setState({

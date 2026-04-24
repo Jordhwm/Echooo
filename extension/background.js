@@ -4,8 +4,12 @@
 const STORAGE_KEYS = {
   IS_RECORDING: "is_recording",
   SESSION_LOG: "session_log",
+  ANALYSIS: "analysis_result",
+  VIEW: "view_state",
+  ERROR: "last_error",
 };
 
+const BACKEND_URL = "https://echooo-chi.vercel.app/api/analyze";
 const APP_URL = chrome.runtime.getURL("app.html");
 
 function domainOf(url) {
@@ -54,9 +58,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   await appendEvent(tab, "tab_updated");
 });
 
-// Toolbar icon → open (or focus) the Echooo tab. The popup has been removed
-// in favor of a full-page app so SOPs can breathe and the user can pin the tab.
-chrome.action.onClicked.addListener(async () => {
+async function openAppTab() {
   const tabs = await chrome.tabs.query({});
   const existing = tabs.find((t) => t.url && t.url.startsWith(APP_URL));
   if (existing) {
@@ -67,7 +69,56 @@ chrome.action.onClicked.addListener(async () => {
   } else {
     await chrome.tabs.create({ url: APP_URL });
   }
+}
+
+// Analysis runs in the background so it survives the popup closing and isn't
+// bound to any particular tab context. Popup + app tab both trigger via
+// chrome.runtime.sendMessage({ cmd: "stop-and-analyze" }).
+async function performAnalysis() {
+  await chrome.storage.local.set({
+    [STORAGE_KEYS.IS_RECORDING]: false,
+    [STORAGE_KEYS.VIEW]: "analyzing",
+    [STORAGE_KEYS.ERROR]: null,
+  });
+  try {
+    const { [STORAGE_KEYS.SESSION_LOG]: log = [] } = await chrome.storage.local.get(
+      STORAGE_KEYS.SESSION_LOG,
+    );
+    const res = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_log: log }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Backend ${res.status}: ${text.slice(0, 300)}`);
+    }
+    const data = await res.json();
+    await chrome.storage.local.set({
+      [STORAGE_KEYS.ANALYSIS]: data,
+      [STORAGE_KEYS.VIEW]: "results",
+    });
+  } catch (err) {
+    console.error("[Echooo] Analyze failed:", err);
+    await chrome.storage.local.set({
+      [STORAGE_KEYS.ERROR]: err.message || String(err),
+      [STORAGE_KEYS.VIEW]: "error",
+    });
+  }
+}
+
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg?.cmd === "stop-and-analyze") {
+    performAnalysis();
+  } else if (msg?.cmd === "open-app") {
+    openAppTab();
+  }
+  return false;
 });
+
+// Fallback for any install where default_popup isn't set (e.g. during dev).
+// When a popup is configured, this listener never fires.
+chrome.action.onClicked.addListener(openAppTab);
 
 async function setRecordingBadge(isRecording) {
   try {
