@@ -1,0 +1,436 @@
+[
+  {
+    "timestamp": 1777626000000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-1",
+    "domain": "mail.google.com",
+    "title": "Refund request from Alex Kim - Gmail",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777626120000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-1",
+    "domain": "mail.google.com",
+    "title": "Refund request from Alex Kim - Gmail",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777626120000,
+    "url": "https://dashboard.stripe.com/payments/pi_3Abc123",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_3Abc123 \u00b7 Stripe Dashboard",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777626300000,
+    "url": "https://dashboard.stripe.com/payments/pi_3Abc123",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_3Abc123 \u00b7 Stripe Dashboard",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777626300000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777626480000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777626600000,
+    "url": "https://news.ycombinator.com/",
+    "domain": "news.ycombinator.com",
+    "title": "Hacker News",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777626720000,
+    "url": "https://news.ycombinator.com/",
+    "domain": "news.ycombinator.com",
+    "title": "Hacker News",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777626900000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777627080000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777627080000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777627320000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777627320000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777627500000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777627800000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-2",
+    "domain": "mail.google.com",
+    "title": "Refund request from Priya Shah - Gmail",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777627920000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-2",
+    "domain": "mail.google.com",
+    "title": "Refund request from Priya Shah - Gmail",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777627920000,
+    "url": "https://dashboard.stripe.com/payments/pi_3Xyz456",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_3Xyz456 \u00b7 Stripe Dashboard",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777628100000,
+    "url": "https://dashboard.stripe.com/payments/pi_3Xyz456",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_3Xyz456 \u00b7 Stripe Dashboard",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777628100000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777628280000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777628700000,
+    "url": "https://app.hubspot.com/contacts/12345/contact/67890",
+    "domain": "app.hubspot.com",
+    "title": "Acme Corp \u00b7 Contact \u00b7 HubSpot",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777628940000,
+    "url": "https://app.hubspot.com/contacts/12345/contact/67890",
+    "domain": "app.hubspot.com",
+    "title": "Acme Corp \u00b7 Contact \u00b7 HubSpot",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777628940000,
+    "url": "https://app.docusign.com/documents/details/abc-123",
+    "domain": "app.docusign.com",
+    "title": "MSA - Acme Corp \u00b7 DocuSign",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777629180000,
+    "url": "https://app.docusign.com/documents/details/abc-123",
+    "domain": "app.docusign.com",
+    "title": "MSA - Acme Corp \u00b7 DocuSign",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777629180000,
+    "url": "https://app.slack.com/client/T12/C34",
+    "domain": "app.slack.com",
+    "title": "#customer-success \u00b7 Slack",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777629480000,
+    "url": "https://app.slack.com/client/T12/C34",
+    "domain": "app.slack.com",
+    "title": "#customer-success \u00b7 Slack",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777629720000,
+    "url": "https://twitter.com/home",
+    "domain": "twitter.com",
+    "title": "Home / X",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777629900000,
+    "url": "https://twitter.com/home",
+    "domain": "twitter.com",
+    "title": "Home / X",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777630500000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777630680000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777630680000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777630920000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777630920000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777631100000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777632000000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-3",
+    "domain": "mail.google.com",
+    "title": "Refund request from Jordan Lee - Gmail",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777632120000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-3",
+    "domain": "mail.google.com",
+    "title": "Refund request from Jordan Lee - Gmail",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777632120000,
+    "url": "https://dashboard.stripe.com/payments/pi_3Def789",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_3Def789 \u00b7 Stripe Dashboard",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777632300000,
+    "url": "https://dashboard.stripe.com/payments/pi_3Def789",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_3Def789 \u00b7 Stripe Dashboard",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777632300000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777632480000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777633200000,
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/fetch",
+    "domain": "developer.mozilla.org",
+    "title": "fetch() - MDN",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777633380000,
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/fetch",
+    "domain": "developer.mozilla.org",
+    "title": "fetch() - MDN",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777633800000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777633980000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777633980000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777634220000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777634220000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777634400000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777635000000,
+    "url": "https://app.hubspot.com/contacts/12345/contact/11111",
+    "domain": "app.hubspot.com",
+    "title": "Globex Inc \u00b7 Contact \u00b7 HubSpot",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777635240000,
+    "url": "https://app.hubspot.com/contacts/12345/contact/11111",
+    "domain": "app.hubspot.com",
+    "title": "Globex Inc \u00b7 Contact \u00b7 HubSpot",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777635240000,
+    "url": "https://app.docusign.com/documents/details/def-456",
+    "domain": "app.docusign.com",
+    "title": "MSA - Globex Inc \u00b7 DocuSign",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777635480000,
+    "url": "https://app.docusign.com/documents/details/def-456",
+    "domain": "app.docusign.com",
+    "title": "MSA - Globex Inc \u00b7 DocuSign",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777635480000,
+    "url": "https://app.slack.com/client/T12/C34",
+    "domain": "app.slack.com",
+    "title": "#customer-success \u00b7 Slack",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777635780000,
+    "url": "https://app.slack.com/client/T12/C34",
+    "domain": "app.slack.com",
+    "title": "#customer-success \u00b7 Slack",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777636200000,
+    "url": "https://www.youtube.com/watch?v=xyz",
+    "domain": "youtube.com",
+    "title": "Dog compilation - YouTube",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777636380000,
+    "url": "https://www.youtube.com/watch?v=xyz",
+    "domain": "youtube.com",
+    "title": "Dog compilation - YouTube",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777636800000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777636980000,
+    "url": "https://linear.app/team/issues",
+    "domain": "linear.app",
+    "title": "Team \u00b7 Issues \u00b7 Linear",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777636980000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777637220000,
+    "url": "https://github.com/team/repo/pulls",
+    "domain": "github.com",
+    "title": "Pull requests \u00b7 team/repo",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777637220000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777637400000,
+    "url": "https://www.notion.so/team/Daily-Standup-notes-xyz",
+    "domain": "notion.so",
+    "title": "Daily Standup Notes - Notion",
+    "event_type": "tab_updated"
+  }
+]
