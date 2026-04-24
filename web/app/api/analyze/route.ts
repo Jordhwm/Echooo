@@ -23,54 +23,48 @@ export async function OPTIONS() {
 function compressEvents(events: SessionEvent[]): Visit[] {
   if (!Array.isArray(events) || events.length === 0) return [];
 
-  const sorted = [...events].sort((a, b) => a.timestamp - b.timestamp);
-  const visits: Visit[] = [];
-  let current: { start: number; end: number; domain: string; title: string; url: string } | null =
-    null;
+  const sorted = [...events]
+    .filter((e) => e && e.domain)
+    .sort((a, b) => a.timestamp - b.timestamp);
+  if (sorted.length === 0) return [];
 
-  const COLLAPSE_WINDOW_MS = 60_000;
-  const MIN_VISIT_MS = 5_000;
+  // Dedupe consecutive same-domain events within 60s — filters tab-thrash
+  // noise while keeping the first event as the visit anchor. Single-tab
+  // sessions often fire only 1-2 events, so we don't try to derive visit
+  // duration from event spans; we derive it from the gap to the next visit.
+  const DEDUPE_WINDOW_MS = 60_000;
+  const MIN_VISIT_SEC = 5;
+  const TAIL_ASSUMED_SEC = 60;
 
+  const deduped: SessionEvent[] = [];
   for (const e of sorted) {
-    if (!e.domain) continue;
+    const prev = deduped[deduped.length - 1];
     if (
-      current &&
-      e.domain === current.domain &&
-      e.timestamp - current.end <= COLLAPSE_WINDOW_MS
+      prev &&
+      prev.domain === e.domain &&
+      e.timestamp - prev.timestamp <= DEDUPE_WINDOW_MS
     ) {
-      current.end = e.timestamp;
-      current.title = e.title || current.title;
-      current.url = e.url || current.url;
-    } else {
-      if (current) {
-        const dur = current.end - current.start;
-        if (dur >= MIN_VISIT_MS || visits.length === 0) {
-          visits.push({
-            start: current.start,
-            duration_sec: Math.max(1, Math.round(dur / 1000)),
-            domain: current.domain,
-            title: current.title,
-            url: current.url,
-          });
-        }
-      }
-      current = {
-        start: e.timestamp,
-        end: e.timestamp,
-        domain: e.domain,
-        title: e.title || "",
-        url: e.url || "",
-      };
+      continue;
     }
+    deduped.push(e);
   }
-  if (current) {
-    const dur = current.end - current.start;
+
+  // Visit duration = gap to the next distinct-domain event. The final
+  // visit has no "next" — assume 60s. Drop any visit under 5s (thrash).
+  const visits: Visit[] = [];
+  for (let i = 0; i < deduped.length; i++) {
+    const e = deduped[i];
+    const next = deduped[i + 1];
+    const durationSec = next
+      ? Math.round((next.timestamp - e.timestamp) / 1000)
+      : TAIL_ASSUMED_SEC;
+    if (durationSec < MIN_VISIT_SEC) continue;
     visits.push({
-      start: current.start,
-      duration_sec: Math.max(1, Math.round(dur / 1000)),
-      domain: current.domain,
-      title: current.title,
-      url: current.url,
+      start: e.timestamp,
+      duration_sec: Math.max(1, durationSec),
+      domain: e.domain,
+      title: e.title || "",
+      url: e.url || "",
     });
   }
 
@@ -115,14 +109,47 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const client = new Anthropic({ apiKey });
+    const client = new Anthropic({ apiKey, maxRetries: 0 });
 
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 4096,
-      system: ANALYZE_SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserPrompt(visits) }],
-    });
+    // Retry with exponential backoff on transient upstream errors.
+    // If the primary model stays overloaded, fall back to Haiku 4.5
+    // (capable enough for workflow analysis; typically has spare capacity).
+    async function callWithBackoff(model: string): Promise<Anthropic.Message> {
+      const MAX_ATTEMPTS = 3;
+      let lastError: unknown;
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+          return await client.messages.create({
+            model,
+            max_tokens: 4096,
+            system: ANALYZE_SYSTEM_PROMPT,
+            messages: [{ role: "user", content: buildUserPrompt(visits) }],
+          });
+        } catch (err) {
+          lastError = err;
+          const status = err instanceof Anthropic.APIError ? err.status : undefined;
+          const retryable = status === 429 || status === 529 || (status != null && status >= 500);
+          if (!retryable || attempt === MAX_ATTEMPTS) throw err;
+          const delay = 600 * Math.pow(2, attempt - 1) + Math.floor(Math.random() * 300);
+          console.warn(`[${model}] attempt ${attempt} failed (status ${status}), retrying in ${delay}ms`);
+          await new Promise((r) => setTimeout(r, delay));
+        }
+      }
+      throw lastError;
+    }
+
+    let response: Anthropic.Message;
+    try {
+      response = await callWithBackoff("claude-sonnet-4-6");
+    } catch (err) {
+      const status = err instanceof Anthropic.APIError ? err.status : undefined;
+      if (status === 529 || status === 429) {
+        console.warn("Sonnet 4.6 exhausted retries; falling back to Haiku 4.5");
+        response = await callWithBackoff("claude-haiku-4-5");
+      } else {
+        throw err;
+      }
+    }
 
     const textBlock = response.content.find(
       (b): b is Anthropic.TextBlock => b.type === "text",

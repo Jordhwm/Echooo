@@ -1,7 +1,7 @@
 // Echooo popup UI — state machine driven by chrome.storage.local.
 // Set BACKEND_URL to your deployed Vercel URL before demo.
 
-const BACKEND_URL = "http://localhost:3000/api/analyze";
+const BACKEND_URL = "https://echooo-chi.vercel.app/api/analyze";
 
 const STORAGE_KEYS = {
   IS_RECORDING: "is_recording",
