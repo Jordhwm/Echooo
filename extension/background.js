@@ -83,11 +83,16 @@ async function openAppTab(requestedTab) {
 // bound to any particular tab context. Popup + app tab both trigger via
 // chrome.runtime.sendMessage({ cmd: "stop-and-analyze" }).
 async function performAnalysis() {
+  console.info("[Echooo] analyze: starting");
   await chrome.storage.local.set({
     [STORAGE_KEYS.IS_RECORDING]: false,
     [STORAGE_KEYS.VIEW]: "analyzing",
     [STORAGE_KEYS.ERROR]: null,
   });
+  const controller = new AbortController();
+  // Vercel maxDuration is 60s; give the client a hair more headroom before
+  // aborting so the serverside error comes through when it's the cause.
+  const timeoutId = setTimeout(() => controller.abort(), 90_000);
   try {
     const { [STORAGE_KEYS.SESSION_LOG]: log = [], [STORAGE_KEYS.WIKI]: wiki = [] } =
       await chrome.storage.local.get([STORAGE_KEYS.SESSION_LOG, STORAGE_KEYS.WIKI]);
@@ -95,26 +100,38 @@ async function performAnalysis() {
     if (Array.isArray(wiki) && wiki.length > 0) {
       payload.existing_wiki = wiki;
     }
+    console.info(
+      `[Echooo] analyze: POST ${BACKEND_URL} events=${log.length} wiki=${(wiki || []).length}`,
+    );
     const res = await fetch(BACKEND_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      signal: controller.signal,
     });
     if (!res.ok) {
       const text = await res.text();
       throw new Error(`Backend ${res.status}: ${text.slice(0, 300)}`);
     }
     const data = await res.json();
+    console.info(
+      `[Echooo] analyze: ok, workflows=${data?.workflows?.length ?? 0}`,
+    );
     await chrome.storage.local.set({
       [STORAGE_KEYS.ANALYSIS]: data,
       [STORAGE_KEYS.VIEW]: "results",
     });
   } catch (err) {
-    console.error("[Echooo] Analyze failed:", err);
+    const msg = err?.name === "AbortError"
+      ? "Analyze timed out after 90s. Claude or Vercel may be slow — try again."
+      : err?.message || String(err);
+    console.error("[Echooo] analyze: failed:", err);
     await chrome.storage.local.set({
-      [STORAGE_KEYS.ERROR]: err.message || String(err),
+      [STORAGE_KEYS.ERROR]: msg,
       [STORAGE_KEYS.VIEW]: "error",
     });
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
