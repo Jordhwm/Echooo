@@ -134,7 +134,11 @@ export async function POST(req: NextRequest) {
         try {
           return await client.messages.create({
             model,
-            max_tokens: 4096,
+            // 4096 was getting truncated mid-JSON when Claude emitted 3
+            // workflows with long ready_prompt strings — the downstream
+            // JSON.parse then failed. 8192 gives comfortable headroom
+            // without inflating cost or latency meaningfully.
+            max_tokens: 8192,
             system: ANALYZE_SYSTEM_PROMPT,
             messages: [
               {
@@ -175,6 +179,19 @@ export async function POST(req: NextRequest) {
     if (!textBlock) {
       return NextResponse.json(
         { error: "Claude returned no text content.", raw: response },
+        { status: 502, headers: CORS_HEADERS },
+      );
+    }
+
+    // If Claude stopped because it hit max_tokens, the JSON is truncated
+    // and parse will fail confusingly. Fail fast with a useful message.
+    if (response.stop_reason === "max_tokens") {
+      return NextResponse.json(
+        {
+          error:
+            "Claude's response hit the output token limit before completing the JSON. Try a shorter session or reduce the number of saved SOPs.",
+          stop_reason: response.stop_reason,
+        },
         { status: 502, headers: CORS_HEADERS },
       );
     }

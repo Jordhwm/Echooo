@@ -79,6 +79,15 @@
         <div class="analyzing-panel">
           <div class="spinner"></div>
           <p class="view-lede">Claude is reading your session and identifying repeated workflows…</p>
+          <div id="analyzing-breakdown" class="analyzing-breakdown" hidden>
+            <div class="analyzing-stats">
+              <div class="stat"><span id="analyzing-visits" class="stat-num">0</span><span class="stat-label">events captured</span></div>
+              <div class="stat"><span id="analyzing-domains" class="stat-num">0</span><span class="stat-label">distinct domains</span></div>
+              <div class="stat"><span id="analyzing-span" class="stat-num">0m</span><span class="stat-label">session span</span></div>
+            </div>
+            <div class="analyzing-section-label">What Claude is looking at</div>
+            <ul id="analyzing-domain-list" class="analyzing-domain-list"></ul>
+          </div>
         </div>
       </section>
 

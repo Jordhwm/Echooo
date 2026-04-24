@@ -215,6 +215,49 @@ async function renderRecording() {
   $("#visit-count").textContent = String(log.length);
 }
 
+async function renderAnalyzing() {
+  const { [STORAGE_KEYS.SESSION_LOG]: log = [] } = await chrome.storage.local.get(
+    STORAGE_KEYS.SESSION_LOG,
+  );
+  const panel = $("#analyzing-breakdown");
+  if (!panel) return;
+  if (!Array.isArray(log) || log.length === 0) {
+    panel.hidden = true;
+    return;
+  }
+  panel.hidden = false;
+
+  const counts = new Map();
+  let minTs = Infinity;
+  let maxTs = -Infinity;
+  for (const ev of log) {
+    if (!ev?.domain) continue;
+    counts.set(ev.domain, (counts.get(ev.domain) || 0) + 1);
+    if (ev.timestamp < minTs) minTs = ev.timestamp;
+    if (ev.timestamp > maxTs) maxTs = ev.timestamp;
+  }
+
+  $("#analyzing-visits").textContent = String(log.length);
+  $("#analyzing-domains").textContent = String(counts.size);
+  const spanMin = Number.isFinite(minTs) && Number.isFinite(maxTs)
+    ? Math.max(1, Math.round((maxTs - minTs) / 60000))
+    : 0;
+  $("#analyzing-span").textContent = spanMin >= 60
+    ? `${(spanMin / 60).toFixed(1)}h`
+    : `${spanMin}m`;
+
+  const top = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+  $("#analyzing-domain-list").innerHTML = top
+    .map(([domain, n]) => `
+      <li>
+        <span class="analyzing-domain">${escapeHtml(domain)}</span>
+        <span class="analyzing-domain-count">${n} visit${n === 1 ? "" : "s"}</span>
+      </li>`)
+    .join("");
+}
+
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, (ch) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
@@ -849,6 +892,7 @@ async function route() {
   showView(view);
 
   if (view === VIEWS.RECORDING) await renderRecording();
+  if (view === VIEWS.ANALYZING) await renderAnalyzing();
   if (view === VIEWS.RESULTS) await renderResults();
   if (view === VIEWS.ERROR) await renderError();
 }
