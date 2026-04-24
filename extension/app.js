@@ -163,7 +163,11 @@ async function renderResults() {
 
 async function renderError() {
   const { [STORAGE_KEYS.ERROR]: message } = await chrome.storage.local.get(STORAGE_KEYS.ERROR);
-  $("#error-message").textContent = message || "Unknown error";
+  const text = (typeof message === "string" && message.trim())
+    ? message
+    : "No error details were recorded. This is usually stale state — click “Try again” to reset.";
+  $("#error-message").textContent = text;
+  console.warn("[Echooo] error view rendered:", { storedMessage: message });
 }
 
 // --- Actions ---
