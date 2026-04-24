@@ -1,5 +1,8 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Make [hidden] authoritative — UA rule otherwise loses to our display:flex. */
+[hidden] { display: none !important; }
+
 :root {
   --bg: #0f1020;
   --bg-elev: #181a30;
@@ -32,7 +35,8 @@ html, body {
 .brand { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
 .sub { color: var(--text-dim); font-size: 11px; }
 
-.popup-view { display: flex; flex-direction: column; gap: 10px; }
+.popup-view[hidden] { display: none; }
+.popup-view:not([hidden]) { display: flex; flex-direction: column; gap: 10px; }
 .hint { color: var(--text-dim); font-size: 12.5px; }
 .hint.subtle { opacity: 0.8; }
 .hint.error { color: #ff8e84; }

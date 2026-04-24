@@ -1,5 +1,10 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Make the HTML `hidden` attribute authoritative everywhere — by default the
+   UA's [hidden]{display:none} rule loses the cascade to any author rule that
+   sets display (e.g. .btn { display: inline-flex }). */
+[hidden] { display: none !important; }
+
 :root {
   --bg: #0f1020;
   --bg-elev: #181a30;
@@ -98,7 +103,10 @@ main#app {
   margin: 0 auto;
   padding: 32px 24px 64px;
 }
-.view { display: flex; flex-direction: column; gap: 16px; }
+/* Use :not([hidden]) so the hidden attribute from showView() actually hides
+   the element — a bare "display: flex" would override the UA [hidden] rule. */
+.view[hidden] { display: none; }
+.view:not([hidden]) { display: flex; flex-direction: column; gap: 16px; }
 .view-lede { color: var(--text-dim); font-size: 14px; }
 
 /* --- Buttons --- */
