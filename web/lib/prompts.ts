@@ -102,11 +102,20 @@ export const buildUserPrompt = (
   ];
 
   if (existingWiki && existingWiki.length > 0) {
+    // Slim wiki: matching only needs id, name, steps, inferred_rules.
+    // ready_prompt alone is often >1KB per SOP and blows past the 60s
+    // Vercel function budget on the drift-flow second call.
+    const slim = existingWiki.map((sop) => ({
+      id: sop.id,
+      name: sop.name,
+      steps: sop.steps,
+      inferred_rules: sop.inferred_rules,
+    }));
     parts.push(
       "",
       `Here is my existing_wiki (${existingWiki.length} saved SOPs). Classify each detected workflow against these — match by intent + domain sequence, not name alone:`,
       "",
-      JSON.stringify(existingWiki, null, 2),
+      JSON.stringify(slim, null, 2),
     );
   } else {
     parts.push("", "existing_wiki is empty — mark every detected workflow as new.");
