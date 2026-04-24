@@ -6,6 +6,8 @@ const STORAGE_KEYS = {
   SESSION_LOG: "session_log",
 };
 
+const APP_URL = chrome.runtime.getURL("app.html");
+
 function domainOf(url) {
   try {
     return new URL(url).hostname;
@@ -52,9 +54,48 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   await appendEvent(tab, "tab_updated");
 });
 
+// Toolbar icon → open (or focus) the Echooo tab. The popup has been removed
+// in favor of a full-page app so SOPs can breathe and the user can pin the tab.
+chrome.action.onClicked.addListener(async () => {
+  const tabs = await chrome.tabs.query({});
+  const existing = tabs.find((t) => t.url && t.url.startsWith(APP_URL));
+  if (existing) {
+    await chrome.tabs.update(existing.id, { active: true });
+    if (existing.windowId != null) {
+      await chrome.windows.update(existing.windowId, { focused: true });
+    }
+  } else {
+    await chrome.tabs.create({ url: APP_URL });
+  }
+});
+
+async function setRecordingBadge(isRecording) {
+  try {
+    await chrome.action.setBadgeText({ text: isRecording ? "REC" : "" });
+    await chrome.action.setBadgeBackgroundColor({ color: "#e74c3c" });
+  } catch {
+    /* action API unavailable during service worker teardown */
+  }
+}
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== "local") return;
+  if (changes[STORAGE_KEYS.IS_RECORDING]) {
+    setRecordingBadge(!!changes[STORAGE_KEYS.IS_RECORDING].newValue);
+  }
+});
+
 chrome.runtime.onInstalled.addListener(async () => {
   const current = await chrome.storage.local.get(STORAGE_KEYS.IS_RECORDING);
   if (current[STORAGE_KEYS.IS_RECORDING] === undefined) {
     await chrome.storage.local.set({ [STORAGE_KEYS.IS_RECORDING]: false });
   }
+  await setRecordingBadge(!!current[STORAGE_KEYS.IS_RECORDING]);
+});
+
+chrome.runtime.onStartup.addListener(async () => {
+  const { [STORAGE_KEYS.IS_RECORDING]: isRecording } = await chrome.storage.local.get(
+    STORAGE_KEYS.IS_RECORDING,
+  );
+  await setRecordingBadge(!!isRecording);
 });

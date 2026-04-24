@@ -37,20 +37,24 @@ A session travels through **4 locations** — understanding the handoffs matters
 chrome.tabs events
   → background.js (filters by is_recording flag)
   → chrome.storage.local (session_log array)
-  → popup.js reads + POSTs to backend
+  → app.js reads + POSTs to backend
   → web/app/api/analyze/route.ts compresses + calls Claude
   → response parsed, stored back in chrome.storage.local (analysis_result)
-  → popup.js renders workflow cards on next open
+  → app.js renders workflow cards (live via storage.onChanged)
 ```
 
-**Storage keys in `chrome.storage.local`** (all read/written by both `background.js` and `popup.js`):
+**Storage keys in `chrome.storage.local`** (all read/written by both `background.js` and `app.js`):
 - `is_recording` — boolean, gates background.js event logging
 - `session_log` — array of `SessionEvent`
 - `analysis_result` — Claude's parsed JSON response
 - `view_state` — `idle` / `recording` / `analyzing` / `results` / `error`
 - `last_error` — error message for the error view
 
-Popup re-reads storage on every open and renders the view matching `view_state`. The state machine is in `popup.js` (`route()` function).
+The app tab re-reads storage on load and reacts to `chrome.storage.onChanged` so state stays live even if the background worker writes while the tab is in the foreground. The state machine is in `app.js` (`route()` function).
+
+### The extension UI is a full tab, not a popup
+
+The toolbar action has no `default_popup`. Clicking the icon fires `chrome.action.onClicked` in `background.js`, which opens (or focuses) a single `chrome-extension://<id>/app.html` tab. The tab is meant to be pinned — recording runs in the background service worker regardless of whether the tab is visible. A `REC` badge on the toolbar icon reflects `is_recording` so the user knows a session is active even without opening the tab.
 
 ### Server-side event compression is load-bearing
 
@@ -62,9 +66,9 @@ Change these thresholds carefully — the demo fixture (`extension/fixtures/demo
 
 ### The JSON schema contract
 
-`web/lib/prompts.ts` defines `ANALYSIS_SCHEMA` (what Claude must return) and `popup.js` renders fields from that schema directly. The two files must stay in sync:
+`web/lib/prompts.ts` defines `ANALYSIS_SCHEMA` (what Claude must return) and `app.js` renders fields from that schema directly. The two files must stay in sync:
 - Workflow cards read `name`, `occurrences`, `avg_duration_min`, `steps[]`, `ai_leverage[]`, `inferred_rules[]`, `ready_prompt`.
-- `ai_leverage[].verdict` must be one of `automatable` / `deterministic` / `judgment` — CSS classes `.verdict-automatable` etc. in `popup.css` are keyed to these strings.
+- `ai_leverage[].verdict` must be one of `automatable` / `deterministic` / `judgment` — CSS classes `.verdict-automatable` etc. in `app.css` are keyed to these strings.
 
 The backend does not use `output_config.format` (SDK 0.30.1 predates it). Instead, the system prompt instructs strict JSON and the route strips markdown fences defensively before `JSON.parse`.
 
@@ -74,7 +78,7 @@ Extensions have origin `chrome-extension://<id>/` — the backend sets `Access-C
 
 ### The `BACKEND_URL` constant
 
-Top of `extension/popup.js`. After each Vercel deploy, this must be updated to the production URL. During local dev, leave it at `http://localhost:3000/api/analyze` and run `npm run dev`.
+Top of `extension/app.js`. After each Vercel deploy, this must be updated to the production URL. During local dev, leave it at `http://localhost:3000/api/analyze` and run `npm run dev`.
 
 ### Vercel framework detection
 
@@ -101,4 +105,4 @@ Use `claude-sonnet-4-6` (set in `web/app/api/analyze/route.ts`). The brief expli
 
 ## Demo safety net
 
-`extension/fixtures/demo-session.json` is the authoritative demo input. The "Load demo fixture" button in the popup (visible on the idle screen) loads it into `session_log` and transitions straight to analyzing. **Record the demo video against the fixture, never live capture** (brief §15) — fixture output is deterministic-ish; live tab events are not.
+`extension/fixtures/demo-session.json` is the authoritative demo input. The "Load demo fixture" button on the idle screen loads it into `session_log` and transitions straight to analyzing. **Record the demo video against the fixture, never live capture** (brief §15) — fixture output is deterministic-ish; live tab events are not.

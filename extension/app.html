@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Echooo — Workflow SOPs</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand">
+          <span class="brand-mark">🪞</span>
+          <div class="brand-text">
+            <h1>Echooo</h1>
+            <span class="tagline">Your AI-adoption buddy.</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span id="header-status" class="status-pill" hidden></span>
+          <button id="start-btn" class="btn btn-primary" hidden>Start session</button>
+          <button id="stop-btn" class="btn btn-stop" hidden>
+            <span class="pulse pulse-inline"></span>
+            <span>Stop &amp; Analyze</span>
+          </button>
+          <button id="reset-btn" class="btn btn-ghost" hidden>New session</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="app">
+      <!-- Idle -->
+      <section class="view" data-view="idle" hidden>
+        <div class="hero">
+          <h2>Turn your repeated work into Claude prompts.</h2>
+          <p class="hero-lede">
+            Start a session and keep working as usual in other tabs. Echooo watches
+            which sites you visit and — when you stop — identifies the workflows you
+            repeat, writes them up as SOPs, and hands you a paste-ready Claude prompt
+            for each one so you can delegate them.
+          </p>
+          <div class="hero-actions">
+            <button id="hero-start-btn" class="btn btn-primary btn-lg">Start session</button>
+            <button id="load-fixture-btn" class="btn btn-ghost">Load demo fixture</button>
+          </div>
+          <p class="hero-hint">Pin this tab and forget about it — recording continues in the background.</p>
+        </div>
+      </section>
+
+      <!-- Recording -->
+      <section class="view" data-view="recording" hidden>
+        <div class="recording-panel">
+          <div class="recording-indicator">
+            <span class="pulse"></span>
+            <span>Recording your session</span>
+          </div>
+          <div class="counter">
+            <span id="visit-count">0</span>
+            <span class="counter-label">events captured</span>
+          </div>
+          <p class="view-lede">
+            Keep working in other tabs. When you're done, use <strong>Stop &amp; Analyze</strong>
+            in the header to let Claude turn your session into SOPs.
+          </p>
+        </div>
+      </section>
+
+      <!-- Analyzing -->
+      <section class="view" data-view="analyzing" hidden>
+        <div class="analyzing-panel">
+          <div class="spinner"></div>
+          <p class="view-lede">Claude is reading your session and identifying repeated workflows…</p>
+        </div>
+      </section>
+
+      <!-- Results -->
+      <section class="view" data-view="results" hidden>
+        <div class="results-head">
+          <h2>Workflows detected</h2>
+          <div id="summary" class="summary"></div>
+        </div>
+        <div id="workflows"></div>
+        <div class="results-footer">
+          <button id="export-md-btn" class="btn btn-ghost">Download all SOPs as markdown</button>
+        </div>
+      </section>
+
+      <!-- Error -->
+      <section class="view" data-view="error" hidden>
+        <div class="error-panel">
+          <p class="error-title">Something went wrong</p>
+          <p id="error-message" class="error-message"></p>
+          <button id="error-reset-btn" class="btn btn-primary">Try again</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

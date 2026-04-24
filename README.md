@@ -34,8 +34,9 @@ The context an LLM needs is already in *what people do*. Watch the work, and bot
 │  background.js          │────────▶│  POST /api/analyze       │
 │    tab event logger     │   JSON  │    │                     │
 │                         │         │    ▼                     │
-│  popup.html/js          │         │  Anthropic SDK           │
-│    start/stop/analyze   │         │  claude-sonnet-4-6       │
+│  app.html/js            │         │  Anthropic SDK           │
+│    full-tab UI,         │         │  claude-sonnet-4-6       │
+│    start/stop/analyze   │         │                          │
 │                         │◀────────│    │                     │
 │  chrome.storage.local   │   JSON  │    ▼                     │
 │    session log          │         │  Structured JSON reply   │
@@ -64,9 +65,9 @@ Copy the deployed URL (e.g. `https://echooo-xyz.vercel.app`).
 
 ### Extension
 
-1. Open `extension/popup.js` and set `BACKEND_URL` to `https://<your-vercel-url>/api/analyze` (top of the file).
+1. Open `extension/app.js` and set `BACKEND_URL` to `https://<your-vercel-url>/api/analyze` (top of the file).
 2. Open Chrome → `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the `extension/` folder.
-3. Click the Echooo icon. Hit **Start session**, work normally across a few tabs, then **Stop & Analyze**.
+3. Click the Echooo toolbar icon — it opens a full-tab app. Hit **Start session**, pin the tab, work normally across other tabs, then come back and **Stop & Analyze**. A `REC` badge on the toolbar icon confirms a session is active.
 
 **For a reliable demo without live capture:** click **Load demo fixture** on the idle screen — it loads a hand-crafted session log showing refund processing, customer onboarding, and standup prep workflows.
 
@@ -77,7 +78,7 @@ echooo/
 ├── extension/               # Chrome extension (MV3, vanilla JS)
 │   ├── manifest.json
 │   ├── background.js        # tab event listener → chrome.storage.local
-│   ├── popup.{html,css,js}  # idle / recording / analyzing / results / error
+│   ├── app.{html,css,js}    # full-tab UI: idle / recording / analyzing / results / error
 │   ├── icons/
 │   └── fixtures/demo-session.json
 ├── web/                     # Next.js backend (single API route)

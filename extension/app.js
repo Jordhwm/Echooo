@@ -1,5 +1,4 @@
-// Echooo popup UI — state machine driven by chrome.storage.local.
-// Set BACKEND_URL to your deployed Vercel URL before demo.
+// Echooo app page — full-tab UI driven by chrome.storage.local state.
 
 const BACKEND_URL = "https://echooo-chi.vercel.app/api/analyze";
 
@@ -26,6 +25,20 @@ function showView(name) {
   $$(".view").forEach((el) => {
     el.hidden = el.dataset.view !== name;
   });
+  renderHeader(name);
+}
+
+function renderHeader(view) {
+  const showStatus = view === VIEWS.RECORDING;
+  const showStart = view === VIEWS.IDLE;
+  const showStop = view === VIEWS.RECORDING;
+  const showReset = view === VIEWS.RESULTS || view === VIEWS.ERROR;
+
+  $("#header-status").hidden = !showStatus;
+  $("#header-status").textContent = showStatus ? "● Recording" : "";
+  $("#start-btn").hidden = !showStart;
+  $("#stop-btn").hidden = !showStop;
+  $("#reset-btn").hidden = !showReset;
 }
 
 async function getState() {
@@ -46,7 +59,7 @@ async function setState(patch) {
 
 async function renderRecording() {
   const { [STORAGE_KEYS.SESSION_LOG]: log = [] } = await chrome.storage.local.get(
-    STORAGE_KEYS.SESSION_LOG
+    STORAGE_KEYS.SESSION_LOG,
   );
   $("#visit-count").textContent = String(log.length);
 }
@@ -101,11 +114,15 @@ function renderWorkflowCard(workflow, index) {
       </div>
       ${meta ? `<div class="workflow-meta">${escapeHtml(meta)}</div>` : ""}
 
-      <div class="section-label">SOP</div>
-      <ol class="step-list">${steps}</ol>
+      <div class="card-col">
+        <div class="section-label">SOP</div>
+        <ol class="step-list">${steps}</ol>
+      </div>
 
-      <div class="section-label">AI leverage</div>
-      <div class="verdict-list">${leverage || '<span class="verdict-why">—</span>'}</div>
+      <div class="card-col">
+        <div class="section-label">AI leverage</div>
+        <div class="verdict-list">${leverage || '<span class="verdict-why">—</span>'}</div>
+      </div>
 
       ${rulesHtml}
 
@@ -170,7 +187,7 @@ async function stopAndAnalyze() {
   await route();
 
   const { [STORAGE_KEYS.SESSION_LOG]: log = [] } = await chrome.storage.local.get(
-    STORAGE_KEYS.SESSION_LOG
+    STORAGE_KEYS.SESSION_LOG,
   );
 
   try {
@@ -300,6 +317,7 @@ async function route() {
 
 document.addEventListener("DOMContentLoaded", () => {
   $("#start-btn").addEventListener("click", startSession);
+  $("#hero-start-btn").addEventListener("click", startSession);
   $("#stop-btn").addEventListener("click", stopAndAnalyze);
   $("#reset-btn").addEventListener("click", resetToIdle);
   $("#error-reset-btn").addEventListener("click", resetToIdle);
@@ -308,10 +326,13 @@ document.addEventListener("DOMContentLoaded", () => {
   route();
 });
 
-// Live-update visit counter while popup is open.
+// Live-update visit counter + react to state changes from other tabs/background.
 chrome.storage.onChanged.addListener((changes) => {
   if (changes[STORAGE_KEYS.SESSION_LOG]) {
-    const el = $("#visit-count");
+    const el = document.getElementById("visit-count");
     if (el) el.textContent = String(changes[STORAGE_KEYS.SESSION_LOG].newValue?.length ?? 0);
+  }
+  if (changes[STORAGE_KEYS.VIEW] || changes[STORAGE_KEYS.IS_RECORDING]) {
+    route();
   }
 });
