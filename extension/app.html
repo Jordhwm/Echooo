@@ -27,6 +27,14 @@
       </div>
     </header>
 
+    <nav id="tab-nav" class="tab-nav" hidden>
+      <button class="tab-btn active" data-tab="analyze">Analyze</button>
+      <button class="tab-btn" data-tab="wiki">
+        Wiki
+        <span id="wiki-tab-count" class="tab-count" hidden></span>
+      </button>
+    </nav>
+
     <main id="app">
       <!-- Idle -->
       <section class="view" data-view="idle" hidden>
@@ -41,6 +49,7 @@
           <div class="hero-actions">
             <button id="hero-start-btn" class="btn btn-primary btn-lg">Start session</button>
             <button id="load-fixture-btn" class="btn btn-ghost">Load demo fixture</button>
+            <button id="load-demo-wiki-btn" class="btn btn-ghost" hidden>Load demo wiki (drift)</button>
           </div>
           <p class="hero-hint">Pin this tab and forget about it — recording continues in the background.</p>
         </div>
@@ -82,6 +91,15 @@
         <div class="results-footer">
           <button id="export-md-btn" class="btn btn-ghost">Download all SOPs as markdown</button>
         </div>
+      </section>
+
+      <!-- Wiki -->
+      <section class="view" data-view="wiki" hidden>
+        <div class="results-head">
+          <h2>My wiki</h2>
+          <div id="wiki-summary" class="summary"></div>
+        </div>
+        <div id="wiki-cards"></div>
       </section>
 
       <!-- Error -->

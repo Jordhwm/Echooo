@@ -1,0 +1,375 @@
+[
+  {
+    "timestamp": 1777712400000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-7",
+    "domain": "mail.google.com",
+    "title": "Refund request from Priya Shah - Gmail",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777712520000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-7",
+    "domain": "mail.google.com",
+    "title": "Refund request from Priya Shah - Gmail",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777712520000,
+    "url": "https://dashboard.stripe.com/radar/reviews/rv_A7x",
+    "domain": "dashboard.stripe.com",
+    "title": "Review rv_A7x - Radar - Stripe",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777712700000,
+    "url": "https://dashboard.stripe.com/radar/reviews/rv_A7x",
+    "domain": "dashboard.stripe.com",
+    "title": "Review rv_A7x - Radar - Stripe",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777712700000,
+    "url": "https://dashboard.stripe.com/payments/pi_7Xyz789",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_7Xyz789 · Stripe Dashboard",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777712880000,
+    "url": "https://dashboard.stripe.com/payments/pi_7Xyz789",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_7Xyz789 · Stripe Dashboard",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777712880000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777713060000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777713600000,
+    "url": "https://news.ycombinator.com/",
+    "domain": "news.ycombinator.com",
+    "title": "Hacker News",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777713720000,
+    "url": "https://news.ycombinator.com/",
+    "domain": "news.ycombinator.com",
+    "title": "Hacker News",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777713720000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-8",
+    "domain": "mail.google.com",
+    "title": "Refund request from Miguel Torres - Gmail",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777713840000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/refund-req-8",
+    "domain": "mail.google.com",
+    "title": "Refund request from Miguel Torres - Gmail",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777713840000,
+    "url": "https://dashboard.stripe.com/radar/reviews/rv_A8k",
+    "domain": "dashboard.stripe.com",
+    "title": "Review rv_A8k - Radar - Stripe",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777714020000,
+    "url": "https://dashboard.stripe.com/radar/reviews/rv_A8k",
+    "domain": "dashboard.stripe.com",
+    "title": "Review rv_A8k - Radar - Stripe",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777714020000,
+    "url": "https://dashboard.stripe.com/payments/pi_8Qr456",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_8Qr456 · Stripe Dashboard",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777714200000,
+    "url": "https://dashboard.stripe.com/payments/pi_8Qr456",
+    "domain": "dashboard.stripe.com",
+    "title": "Payment pi_8Qr456 · Stripe Dashboard",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777714200000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777714380000,
+    "url": "https://www.notion.so/team/Refunds-Tracker-abc123",
+    "domain": "notion.so",
+    "title": "Refunds Tracker - Notion",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777714800000,
+    "url": "https://linear.app/echooo/issues",
+    "domain": "linear.app",
+    "title": "My issues - Linear",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777714920000,
+    "url": "https://linear.app/echooo/issues",
+    "domain": "linear.app",
+    "title": "My issues - Linear",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777714920000,
+    "url": "https://github.com/echooo-team/app/pulls?q=is:open+author:jordon",
+    "domain": "github.com",
+    "title": "Pull Requests · echooo-team/app",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777715100000,
+    "url": "https://github.com/echooo-team/app/pulls?q=is:open+author:jordon",
+    "domain": "github.com",
+    "title": "Pull Requests · echooo-team/app",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777715100000,
+    "url": "https://www.notion.so/team/Standup-notes-xyz789",
+    "domain": "notion.so",
+    "title": "Standup notes - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777715280000,
+    "url": "https://www.notion.so/team/Standup-notes-xyz789",
+    "domain": "notion.so",
+    "title": "Standup notes - Notion",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777715700000,
+    "url": "https://linear.app/echooo/issues",
+    "domain": "linear.app",
+    "title": "My issues - Linear",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777715820000,
+    "url": "https://linear.app/echooo/issues",
+    "domain": "linear.app",
+    "title": "My issues - Linear",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777715820000,
+    "url": "https://github.com/echooo-team/app/pulls",
+    "domain": "github.com",
+    "title": "Pull Requests · echooo-team/app",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777716000000,
+    "url": "https://github.com/echooo-team/app/pulls",
+    "domain": "github.com",
+    "title": "Pull Requests · echooo-team/app",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777716000000,
+    "url": "https://www.notion.so/team/Standup-notes-xyz789",
+    "domain": "notion.so",
+    "title": "Standup notes - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777716180000,
+    "url": "https://www.notion.so/team/Standup-notes-xyz789",
+    "domain": "notion.so",
+    "title": "Standup notes - Notion",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777716600000,
+    "url": "https://twitter.com/home",
+    "domain": "twitter.com",
+    "title": "Home / X",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777716720000,
+    "url": "https://twitter.com/home",
+    "domain": "twitter.com",
+    "title": "Home / X",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777716720000,
+    "url": "https://linear.app/echooo/issues",
+    "domain": "linear.app",
+    "title": "My issues - Linear",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777716840000,
+    "url": "https://linear.app/echooo/issues",
+    "domain": "linear.app",
+    "title": "My issues - Linear",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777716840000,
+    "url": "https://github.com/echooo-team/app/pulls",
+    "domain": "github.com",
+    "title": "Pull Requests · echooo-team/app",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777717020000,
+    "url": "https://github.com/echooo-team/app/pulls",
+    "domain": "github.com",
+    "title": "Pull Requests · echooo-team/app",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777717020000,
+    "url": "https://www.notion.so/team/Standup-notes-xyz789",
+    "domain": "notion.so",
+    "title": "Standup notes - Notion",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777717200000,
+    "url": "https://www.notion.so/team/Standup-notes-xyz789",
+    "domain": "notion.so",
+    "title": "Standup notes - Notion",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777717800000,
+    "url": "https://go.xero.com/Bank/BankTransfers.aspx",
+    "domain": "go.xero.com",
+    "title": "Bank reconciliation · Xero",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777717920000,
+    "url": "https://go.xero.com/Bank/BankTransfers.aspx",
+    "domain": "go.xero.com",
+    "title": "Bank reconciliation · Xero",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777717920000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/invoice-vendor-aws",
+    "domain": "mail.google.com",
+    "title": "AWS invoice April - billing@amazon.com",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777718100000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/invoice-vendor-aws",
+    "domain": "mail.google.com",
+    "title": "AWS invoice April - billing@amazon.com",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777718100000,
+    "url": "https://docs.google.com/spreadsheets/d/1abcVendorRecon/edit",
+    "domain": "docs.google.com",
+    "title": "Vendor reconciliation Q2 - Google Sheets",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777718280000,
+    "url": "https://docs.google.com/spreadsheets/d/1abcVendorRecon/edit",
+    "domain": "docs.google.com",
+    "title": "Vendor reconciliation Q2 - Google Sheets",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777718700000,
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/Clipboard",
+    "domain": "developer.mozilla.org",
+    "title": "Clipboard API - MDN",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777718820000,
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/Clipboard",
+    "domain": "developer.mozilla.org",
+    "title": "Clipboard API - MDN",
+    "event_type": "tab_updated"
+  },
+
+  {
+    "timestamp": 1777718820000,
+    "url": "https://go.xero.com/Bank/BankTransfers.aspx",
+    "domain": "go.xero.com",
+    "title": "Bank reconciliation · Xero",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777718940000,
+    "url": "https://go.xero.com/Bank/BankTransfers.aspx",
+    "domain": "go.xero.com",
+    "title": "Bank reconciliation · Xero",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777718940000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/invoice-vendor-vercel",
+    "domain": "mail.google.com",
+    "title": "Vercel invoice April - billing@vercel.com",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777719120000,
+    "url": "https://mail.google.com/mail/u/0/#inbox/invoice-vendor-vercel",
+    "domain": "mail.google.com",
+    "title": "Vercel invoice April - billing@vercel.com",
+    "event_type": "tab_updated"
+  },
+  {
+    "timestamp": 1777719120000,
+    "url": "https://docs.google.com/spreadsheets/d/1abcVendorRecon/edit",
+    "domain": "docs.google.com",
+    "title": "Vendor reconciliation Q2 - Google Sheets",
+    "event_type": "tab_activated"
+  },
+  {
+    "timestamp": 1777719300000,
+    "url": "https://docs.google.com/spreadsheets/d/1abcVendorRecon/edit",
+    "domain": "docs.google.com",
+    "title": "Vendor reconciliation Q2 - Google Sheets",
+    "event_type": "tab_updated"
+  }
+]

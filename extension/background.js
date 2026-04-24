@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   ANALYSIS: "analysis_result",
   VIEW: "view_state",
   ERROR: "last_error",
+  WIKI: "wiki_sops",
 };
 
 const BACKEND_URL = "https://echooo-chi.vercel.app/api/analyze";
@@ -58,16 +59,23 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   await appendEvent(tab, "tab_updated");
 });
 
-async function openAppTab() {
+async function openAppTab(requestedTab) {
+  // Append ?tab= so the app routes to the right view on load.
+  const targetUrl = requestedTab ? `${APP_URL}?tab=${encodeURIComponent(requestedTab)}` : APP_URL;
   const tabs = await chrome.tabs.query({});
   const existing = tabs.find((t) => t.url && t.url.startsWith(APP_URL));
   if (existing) {
-    await chrome.tabs.update(existing.id, { active: true });
+    // If a specific tab was requested, reload with the query param so the app reads it.
+    if (requestedTab && !existing.url.includes(`tab=${requestedTab}`)) {
+      await chrome.tabs.update(existing.id, { url: targetUrl, active: true });
+    } else {
+      await chrome.tabs.update(existing.id, { active: true });
+    }
     if (existing.windowId != null) {
       await chrome.windows.update(existing.windowId, { focused: true });
     }
   } else {
-    await chrome.tabs.create({ url: APP_URL });
+    await chrome.tabs.create({ url: targetUrl });
   }
 }
 
@@ -81,13 +89,16 @@ async function performAnalysis() {
     [STORAGE_KEYS.ERROR]: null,
   });
   try {
-    const { [STORAGE_KEYS.SESSION_LOG]: log = [] } = await chrome.storage.local.get(
-      STORAGE_KEYS.SESSION_LOG,
-    );
+    const { [STORAGE_KEYS.SESSION_LOG]: log = [], [STORAGE_KEYS.WIKI]: wiki = [] } =
+      await chrome.storage.local.get([STORAGE_KEYS.SESSION_LOG, STORAGE_KEYS.WIKI]);
+    const payload = { session_log: log };
+    if (Array.isArray(wiki) && wiki.length > 0) {
+      payload.existing_wiki = wiki;
+    }
     const res = await fetch(BACKEND_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_log: log }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const text = await res.text();
@@ -111,14 +122,14 @@ chrome.runtime.onMessage.addListener((msg) => {
   if (msg?.cmd === "stop-and-analyze") {
     performAnalysis();
   } else if (msg?.cmd === "open-app") {
-    openAppTab();
+    openAppTab(msg.tab);
   }
   return false;
 });
 
 // Fallback for any install where default_popup isn't set (e.g. during dev).
 // When a popup is configured, this listener never fires.
-chrome.action.onClicked.addListener(openAppTab);
+chrome.action.onClicked.addListener(() => openAppTab());
 
 async function setRecordingBadge(isRecording) {
   try {

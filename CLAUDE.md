@@ -50,13 +50,14 @@ chrome.tabs events
 - `analysis_result` — Claude's parsed JSON response
 - `view_state` — `idle` / `recording` / `analyzing` / `results` / `error`
 - `last_error` — error message for the error view
+- `wiki_sops` — array of `SavedSOP`; **persists across sessions** (never cleared by `startSession` or `resetToIdle`). `background.js` reads this before every analyze fetch and sends it as `existing_wiki` in the POST body so Claude can classify detected workflows as `new` / `updated` / `unchanged`.
 
 Popup + app tab both re-read storage on open and react to `chrome.storage.onChanged`, so the three surfaces (popup, app tab, background worker) stay in sync. State machines in `popup.js` and `app.js` both live in their own `route()` function; the background worker's `performAnalysis()` is what flips `view_state` through analyzing → results/error.
 
 ### Two UI surfaces + one background worker
 
 - **Popup** (`popup.html`, 300px wide) — minimal Start / Stop toggle, event counter, and "Open Echooo tab →" shortcut. Popup closes whenever the user clicks away, so it can't own long-running work.
-- **App tab** (`app.html`, full page) — idle hero, live recording view, analyzing spinner, and the results grid with workflow cards, Copy-Claude-prompt buttons, and markdown export.
+- **App tab** (`app.html`, full page) — idle hero, live recording view, analyzing spinner, results grid (Analyze tab) and the **Wiki tab** (saved SOPs with 🟢/🟡/🔵 status, Save/Accept/Dismiss actions, and an optional `?demo` query param that reveals a "Load demo wiki (drift)" button wiring the full session-1 → save → session-2 demo in one click).
 - **Background service worker** (`background.js`) — owns tab event capture AND the analyze fetch. Popup / app both trigger analysis by sending `chrome.runtime.sendMessage({ cmd: "stop-and-analyze" })`; `performAnalysis()` flips `view_state` so both surfaces animate through the same state machine. `cmd: "open-app"` opens or focuses the app tab.
 
 A `REC` badge on the toolbar icon mirrors `is_recording` so the session is visible even when nothing's open.
@@ -74,6 +75,10 @@ Change these thresholds carefully — the demo fixture (`extension/fixtures/demo
 `web/lib/prompts.ts` defines `ANALYSIS_SCHEMA` (what Claude must return) and `app.js` renders fields from that schema directly (popup doesn't touch the schema — it only shows state). The two files must stay in sync:
 - Workflow cards read `name`, `occurrences`, `avg_duration_min`, `steps[]`, `ai_leverage[]`, `inferred_rules[]`, `ready_prompt`.
 - `ai_leverage[].verdict` must be one of `automatable` / `deterministic` / `judgment` — CSS classes `.verdict-automatable` etc. in `app.css` are keyed to these strings.
+- `status` must be `new` / `updated` / `unchanged` — CSS classes `.status-new` / `.status-updated` / `.status-unchanged` in `app.css` are keyed to these strings. The Wiki tab uses these for the colored dot + label.
+- `matched_sop_id` is the join key between Claude's detection and a row in `wiki_sops`. `diff_summary` is a 1–3 item string array, only present when `status === "updated"`.
+
+`route.ts` backfills missing `status` / `matched_sop_id` / `diff_summary` fields after `JSON.parse`, so the extension always sees the full shape even if Claude omits them. An `updated` with no `diff_summary` is downgraded to `unchanged` server-side — don't render "updated" cards without diff bullets.
 
 The backend does not use `output_config.format` (SDK 0.30.1 predates it). Instead, the system prompt instructs strict JSON and the route strips markdown fences defensively before `JSON.parse`.
 
@@ -110,4 +115,8 @@ Use `claude-sonnet-4-6` (set in `web/app/api/analyze/route.ts`). The brief expli
 
 ## Demo safety net
 
-`extension/fixtures/demo-session.json` is the authoritative demo input. The "Load demo fixture" button on the idle screen loads it into `session_log` and transitions straight to analyzing. **Record the demo video against the fixture, never live capture** (brief §15) — fixture output is deterministic-ish; live tab events are not.
+`extension/fixtures/demo-session.json` is the authoritative demo input for the base Analyze flow. The "Load demo fixture" button on the idle screen loads it into `session_log` and transitions straight to analyzing.
+
+`extension/fixtures/demo-session-2.json` is the drift-demo input for the Wiki feature: same standup workflow (unchanged), same refund workflow but with a `dashboard.stripe.com/radar` fraud-check step inserted, plus a brand-new invoice-reconciliation workflow (`go.xero.com` → `mail.google.com` → `docs.google.com`). The two fixtures together drive the canonical Wiki-tab demo via the `?demo` URL param on the app tab.
+
+**Record the demo video against the fixtures, never live capture** (brief §15) — fixture output is deterministic-ish; live tab events are not.

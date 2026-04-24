@@ -76,8 +76,8 @@ async function resetToIdle() {
   await route();
 }
 
-async function openApp() {
-  await chrome.runtime.sendMessage({ cmd: "open-app" });
+async function openApp(tab) {
+  await chrome.runtime.sendMessage({ cmd: "open-app", tab });
   window.close();
 }
 
@@ -86,7 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#stop-btn").addEventListener("click", stopAndAnalyze);
   $("#new-session-btn").addEventListener("click", resetToIdle);
   $("#err-reset-btn").addEventListener("click", resetToIdle);
-  $("#open-app-btn").addEventListener("click", openApp);
+  $("#open-app-btn").addEventListener("click", () => openApp());
+  $("#open-wiki-btn").addEventListener("click", () => openApp("wiki"));
   route();
 });
 

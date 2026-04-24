@@ -101,5 +101,5 @@ html, body {
 .popup-foot {
   border-top: 1px solid var(--border);
   padding-top: 8px;
-  text-align: center;
+  display: flex; justify-content: space-between; gap: 4px;
 }

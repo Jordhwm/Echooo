@@ -62,6 +62,36 @@ body {
   border: 1px solid rgba(231, 76, 60, 0.3);
 }
 
+/* --- Tab nav --- */
+.tab-nav {
+  position: sticky; top: 62px; z-index: 9;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 12px 24px 0;
+  display: flex; gap: 4px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(15, 16, 32, 0.85);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+}
+.tab-btn {
+  appearance: none; border: none; cursor: pointer;
+  background: transparent; color: var(--text-dim);
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  padding: 10px 16px 12px;
+  border-bottom: 2px solid transparent;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+.tab-count {
+  background: var(--warn); color: #1a1300;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 7px; border-radius: 999px;
+  min-width: 20px; text-align: center;
+}
+
 /* --- Main --- */
 main#app {
   max-width: var(--max-w);
@@ -290,6 +320,73 @@ main#app {
   word-break: break-word; width: 100%; text-align: left;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
+
+/* --- Wiki --- */
+#wiki-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+
+.wiki-empty {
+  text-align: center; padding: 48px 24px;
+  color: var(--text-dim); font-size: 14px; line-height: 1.6;
+  background: var(--bg-elev); border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.wiki-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px 22px;
+}
+.wiki-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 6px;
+}
+.status-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-unchanged .status-dot { background: var(--success); }
+.status-updated .status-dot { background: var(--warn); }
+.status-new .status-dot { background: var(--info); }
+.wiki-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; flex: 1; }
+.wiki-status-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-dim);
+}
+.status-updated .wiki-status-label { color: var(--warn); }
+.status-new .wiki-status-label { color: var(--info); }
+.status-unchanged .wiki-status-label { color: var(--success); }
+
+.wiki-meta {
+  font-size: 12px; color: var(--text-dim); margin-bottom: 10px;
+  padding-left: 20px;
+}
+
+.diff-bullets {
+  list-style: none; padding: 0; margin: 10px 0 14px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.diff-bullets li {
+  position: relative; padding-left: 16px;
+  font-size: 13.5px; line-height: 1.5; color: var(--text);
+}
+.diff-bullets li::before {
+  content: "•"; position: absolute; left: 0; color: var(--warn);
+  font-weight: 700;
+}
+
+.wiki-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 14px;
+}
+.wiki-actions .btn { padding: 8px 14px; font-size: 13px; }
+.btn-accept { background: var(--success); color: #0c2a15; }
+.btn-accept:hover { background: #3fd97f; }
+.btn-save { background: var(--info); color: #06223a; }
+.btn-save:hover { background: #4faedc; }
+
+.wiki-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.wiki-card.expanded .wiki-detail { display: block; }
+.wiki-detail .section-label { margin-top: 0; }
+.wiki-detail .step-list { margin-bottom: 12px; }
 
 /* --- Responsive --- */
 @media (max-width: 720px) {

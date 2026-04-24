@@ -25,6 +25,14 @@ The context an LLM needs is already in *what people do*. Watch the work, and bot
    - A **ready-to-paste Claude prompt** — rich with context, so a teammate can drop it into claude.ai and get useful output on the first try.
 4. One-click **Download all SOPs as markdown** for your wiki.
 
+## The living wiki
+
+SOPs go stale. Nobody has time to maintain them. Echooo closes the loop: save a detected workflow to your wiki, and the next time Echooo runs, it checks whether your actual behavior still matches. When it drifts, you get a yellow "Suggested update" badge with the specific changes and a one-click **Accept**. Your documentation stays current because it updates itself from the work you're already doing.
+
+The wiki also flags fresh workflows Echooo sees for the first time — click **Save to wiki** and they join your living docs; click **Dismiss** and they disappear for the session.
+
+**In this MVP:** wiki lives in `chrome.storage.local` per-profile. **Next:** direct sync to Google Drive, Notion, or Confluence — SOPs stored where your team already looks for them, drift detection running in the background.
+
 ## Architecture
 
 ```
@@ -72,6 +80,8 @@ Copy the deployed URL (e.g. `https://echooo-xyz.vercel.app`).
 
 **For a reliable demo without live capture:** click **Load demo fixture** on the idle screen — it loads a hand-crafted session log showing refund processing, customer onboarding, and standup prep workflows.
 
+**For the full living-wiki demo:** open the Echooo tab at `chrome-extension://<your-ext-id>/app.html?demo` — a second button appears that runs the scripted flow (analyze session 1 → save all SOPs → analyze session 2 → switch to Wiki tab). Session 2 contains a drifted refund workflow + an unchanged standup + a brand-new invoice reconciliation — so the Wiki tab lands on one 🟡 "Suggested update", one 🟢 "Up to date", and one 🔵 "New".
+
 ## Repository layout
 
 ```
@@ -82,7 +92,9 @@ echooo/
 │   ├── popup.{html,css,js}  # compact Start / Stop toggle
 │   ├── app.{html,css,js}    # full-tab SOP view: idle / recording / analyzing / results / error
 │   ├── icons/
-│   └── fixtures/demo-session.json
+│   └── fixtures/
+│       ├── demo-session.json          # session 1 — refund / onboarding / standup
+│       └── demo-session-2.json        # session 2 — drifted refund + new invoice workflow
 ├── web/                     # Next.js backend (single API route)
 │   ├── app/api/analyze/route.ts
 │   ├── lib/prompts.ts

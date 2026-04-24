@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   ANALYZE_SYSTEM_PROMPT,
   buildUserPrompt,
+  SavedSOP,
   SessionEvent,
   Visit,
 } from "@/lib/prompts";
@@ -97,6 +98,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // existing_wiki is optional but must be an array when provided.
+    let existingWiki: SavedSOP[] | undefined;
+    if (body.existing_wiki !== undefined && body.existing_wiki !== null) {
+      if (!Array.isArray(body.existing_wiki)) {
+        return NextResponse.json(
+          { error: "existing_wiki must be an array of SavedSOP objects." },
+          { status: 400, headers: CORS_HEADERS },
+        );
+      }
+      existingWiki = body.existing_wiki as SavedSOP[];
+    }
+
     const visits = compressEvents(body.session_log as SessionEvent[]);
 
     if (visits.length === 0) {
@@ -123,7 +136,12 @@ export async function POST(req: NextRequest) {
             model,
             max_tokens: 4096,
             system: ANALYZE_SYSTEM_PROMPT,
-            messages: [{ role: "user", content: buildUserPrompt(visits) }],
+            messages: [
+              {
+                role: "user",
+                content: buildUserPrompt(visits, existingWiki),
+              },
+            ],
           });
         } catch (err) {
           lastError = err;
@@ -187,7 +205,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json(parsed, { headers: CORS_HEADERS });
+    // Backfill wiki-awareness fields if Claude omitted any — callers always
+    // see the full shape so the extension doesn't have to branch on missing keys.
+    const result = parsed as {
+      workflows: Record<string, unknown>[];
+      summary: string;
+    };
+    const allowedStatuses = new Set(["new", "updated", "unchanged"]);
+    for (const wf of result.workflows) {
+      if (!allowedStatuses.has(wf.status as string)) {
+        wf.status = "new";
+      }
+      if (typeof wf.matched_sop_id !== "string") {
+        wf.matched_sop_id = null;
+      }
+      if (wf.status === "updated") {
+        if (!Array.isArray(wf.diff_summary) || wf.diff_summary.length === 0) {
+          // An "updated" with no diff is meaningless — downgrade to unchanged.
+          wf.status = "unchanged";
+          wf.diff_summary = null;
+        }
+      } else {
+        wf.diff_summary = null;
+      }
+      if (wf.status === "new") {
+        wf.matched_sop_id = null;
+      }
+    }
+
+    return NextResponse.json(result, { headers: CORS_HEADERS });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("analyze route error:", err);
