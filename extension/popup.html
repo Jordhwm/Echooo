@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Echooo</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark">🪞</span>
+        <h1>Echooo</h1>
+      </div>
+      <p class="tagline">Your AI-adoption buddy.</p>
+    </header>
+
+    <main id="app">
+      <!-- Idle -->
+      <section class="view" data-view="idle" hidden>
+        <p class="view-lede">Record a work session. Echooo watches your tabs and turns your repeated workflows into SOPs + paste-ready Claude prompts.</p>
+        <button id="start-btn" class="btn btn-primary btn-block">Start session</button>
+        <button id="load-fixture-btn" class="btn btn-ghost btn-block dev-btn">Load demo fixture</button>
+      </section>
+
+      <!-- Recording -->
+      <section class="view" data-view="recording" hidden>
+        <div class="recording-indicator">
+          <span class="pulse"></span>
+          <span>Recording…</span>
+        </div>
+        <div class="counter">
+          <span id="visit-count">0</span>
+          <span class="counter-label">events captured</span>
+        </div>
+        <button id="stop-btn" class="btn btn-primary btn-block">Stop &amp; Analyze</button>
+      </section>
+
+      <!-- Analyzing -->
+      <section class="view" data-view="analyzing" hidden>
+        <div class="spinner"></div>
+        <p class="view-lede">Claude is reading your session and identifying repeated workflows…</p>
+      </section>
+
+      <!-- Results -->
+      <section class="view" data-view="results" hidden>
+        <div id="summary" class="summary"></div>
+        <div id="workflows"></div>
+        <div class="results-footer">
+          <button id="export-md-btn" class="btn btn-ghost btn-block">Download all SOPs as markdown</button>
+          <button id="reset-btn" class="btn btn-ghost btn-block">New session</button>
+        </div>
+      </section>
+
+      <!-- Error -->
+      <section class="view" data-view="error" hidden>
+        <p class="error-title">Something went wrong</p>
+        <p id="error-message" class="error-message"></p>
+        <button id="error-reset-btn" class="btn btn-ghost btn-block">Try again</button>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

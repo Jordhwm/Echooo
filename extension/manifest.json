@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Echooo",
+  "version": "0.1.0",
+  "description": "Your AI-adoption buddy. Watches how you work, writes your SOPs, hands you the Claude prompt.",
+  "permissions": ["tabs", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html" },
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  }
+}
