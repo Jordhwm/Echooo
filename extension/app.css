@@ -396,6 +396,59 @@ main#app {
 .wiki-detail .section-label { margin-top: 0; }
 .wiki-detail .step-list { margin-bottom: 12px; }
 
+/* Side-by-side old vs new for "updated" cards */
+.wiki-diff {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-bottom: 14px;
+}
+.wiki-diff-col {
+  background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+}
+.wiki-diff-col.proposed-col {
+  border-color: rgba(243, 156, 18, 0.35);
+  box-shadow: 0 0 0 1px rgba(243, 156, 18, 0.15) inset;
+}
+.diff-col-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-dim); font-weight: 700; margin-bottom: 10px;
+}
+.proposed-col .diff-col-label { color: var(--warn); }
+
+.step-item.removed {
+  opacity: 0.55;
+}
+.step-item.removed .step-domain,
+.step-item.removed .step-action {
+  text-decoration: line-through;
+}
+.step-item.added .step-num {
+  background: rgba(46, 204, 113, 0.2);
+  color: var(--success);
+  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.35);
+}
+.step-item.removed .step-num {
+  background: rgba(231, 76, 60, 0.15);
+  color: #ff8e84;
+}
+.step-diff-tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 3px;
+  margin-left: 6px; letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+.step-diff-tag.added {
+  background: rgba(46, 204, 113, 0.2); color: var(--success);
+}
+.step-diff-tag.removed {
+  background: rgba(231, 76, 60, 0.18); color: #ff8e84;
+}
+
+@media (max-width: 720px) {
+  .wiki-diff { grid-template-columns: 1fr; }
+}
+
 /* --- Responsive --- */
 @media (max-width: 720px) {
   .workflow-card { grid-template-columns: 1fr; }

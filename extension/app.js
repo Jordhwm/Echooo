@@ -323,6 +323,54 @@ async function renderError() {
 
 // --- Wiki rendering ---
 
+// For "updated" cards: render Saved-SOP steps next to Proposed-update steps
+// with add/remove highlighting. Matching is by domain: if a saved step's
+// domain doesn't appear in the proposed list it's marked "removed"; if a
+// proposed step's domain isn't in the saved list it's marked "added".
+// Everything else is unchanged.
+function renderStepDiff(steps, otherDomains, mode) {
+  return (steps || [])
+    .map((step, i) => {
+      const domain = step.domain || "";
+      const isDifferent = !otherDomains.has(domain);
+      const cls = isDifferent
+        ? `step-item ${mode === "saved" ? "removed" : "added"}`
+        : "step-item";
+      const tag = isDifferent
+        ? `<span class="step-diff-tag ${mode === "saved" ? "removed" : "added"}">${mode === "saved" ? "was" : "new"}</span>`
+        : "";
+      return `
+        <li class="${cls}">
+          <span class="step-num">${i + 1}</span>
+          <div>
+            <span class="step-domain">${escapeHtml(domain)}</span>
+            <span class="step-action"> — ${escapeHtml(step.action || "")}</span>
+            ${tag}
+          </div>
+        </li>`;
+    })
+    .join("");
+}
+
+function renderSOPDiff(sop, proposed) {
+  const savedDomains = new Set((sop.steps || []).map((s) => s.domain || ""));
+  const proposedDomains = new Set((proposed.steps || []).map((s) => s.domain || ""));
+  const savedLabel = sop.saved_at
+    ? `Saved SOP · ${new Date(sop.saved_at).toLocaleDateString()}`
+    : "Saved SOP";
+  return `
+    <div class="wiki-diff">
+      <div class="wiki-diff-col saved-col">
+        <div class="diff-col-label">${escapeHtml(savedLabel)}</div>
+        <ol class="step-list">${renderStepDiff(sop.steps, proposedDomains, "saved")}</ol>
+      </div>
+      <div class="wiki-diff-col proposed-col">
+        <div class="diff-col-label">Proposed update · this session</div>
+        <ol class="step-list">${renderStepDiff(proposed.steps, savedDomains, "proposed")}</ol>
+      </div>
+    </div>`;
+}
+
 function renderWikiCardInner(steps, aiLeverage, rules) {
   const stepsHtml = (steps || [])
     .map((step, i) => `
@@ -380,6 +428,29 @@ function renderWikiCard(entry) {
     const detailSource = status === "updated" && proposed ? proposed : sop;
     const isExpanded = expandedCards.has(sop.id);
 
+    // For updated cards, swap the single-SOP detail view for a side-by-side
+    // diff. The rest (ai_leverage + inferred_rules) shown below is the
+    // proposed version — what lands if the user clicks Accept.
+    const detailBody = status === "updated" && proposed
+      ? `
+        ${renderSOPDiff(sop, proposed)}
+        <div class="section-label">AI leverage (proposed)</div>
+        <div class="verdict-list">${(proposed.ai_leverage || [])
+          .map((lev) => `
+            <div class="verdict-item">
+              <span class="verdict-tag verdict-${lev.verdict || "judgment"}">${escapeHtml(lev.verdict || "?")}</span>
+              <span class="verdict-why">Step ${(lev.step_index ?? 0) + 1}: ${escapeHtml(lev.why || "")}</span>
+            </div>`)
+          .join("") || '<span class="verdict-why">—</span>'}</div>
+        ${(proposed.inferred_rules || []).filter(Boolean).length
+          ? `<div class="rules-callout">
+               <strong>Inferred rules (proposed)</strong>
+               <ul>${proposed.inferred_rules.filter(Boolean).map((r) => `<li>${escapeHtml(r)}</li>`).join("")}</ul>
+             </div>`
+          : ""}
+      `
+      : renderWikiCardInner(detailSource.steps, detailSource.ai_leverage, detailSource.inferred_rules);
+
     return `
       <article class="wiki-card status-${status} ${isExpanded ? "expanded" : ""}" data-sop-id="${sop.id}">
         <div class="wiki-head">
@@ -390,7 +461,7 @@ function renderWikiCard(entry) {
         ${diffHtml}
         <div class="wiki-actions">${actions}</div>
         <div class="wiki-detail">
-          ${renderWikiCardInner(detailSource.steps, detailSource.ai_leverage, detailSource.inferred_rules)}
+          ${detailBody}
           ${sop.ready_prompt ? `<button class="copy-prompt-btn" data-copy-prompt="${encodeURIComponent(sop.ready_prompt)}">📋 Copy Claude prompt</button>` : ""}
         </div>
       </article>`;
