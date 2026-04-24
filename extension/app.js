@@ -300,13 +300,26 @@ function renderWorkflowCard(workflow, index) {
   const avg = workflow.avg_duration_min;
   const meta = avg != null ? `${avg} min average` : "";
 
+  const status = workflow.status || "new";
+  const statusLabel = status === "updated"
+    ? "Drift detected · matches a saved SOP"
+    : status === "unchanged"
+      ? "Already in your wiki"
+      : "New workflow · not in your wiki";
+  const saveAction = status === "new"
+    ? `<button class="btn btn-save" data-save-index="${index}">＋ Save to wiki</button>`
+    : `<button class="btn btn-ghost" data-view-wiki="1">View in Wiki</button>`;
+
   return `
-    <article class="workflow-card" data-workflow-index="${index}">
+    <article class="workflow-card status-${status}" data-workflow-index="${index}">
       <div class="workflow-head">
         <div class="workflow-name">${escapeHtml(workflow.name || "Untitled workflow")}</div>
         <span class="workflow-badge">Detected ${occurrences}×</span>
       </div>
-      ${meta ? `<div class="workflow-meta">${escapeHtml(meta)}</div>` : ""}
+      <div class="workflow-status-row">
+        <span class="workflow-status-chip chip-${status}">${escapeHtml(statusLabel)}</span>
+        ${meta ? `<span class="workflow-meta">${escapeHtml(meta)}</span>` : ""}
+      </div>
 
       <div class="card-col">
         <div class="section-label">SOP</div>
@@ -320,9 +333,12 @@ function renderWorkflowCard(workflow, index) {
 
       ${rulesHtml}
 
-      <button class="copy-prompt-btn" data-prompt-index="${index}">
-        📋 Copy Claude prompt
-      </button>
+      <div class="workflow-actions">
+        ${saveAction}
+        <button class="copy-prompt-btn" data-prompt-index="${index}">
+          📋 Copy Claude prompt
+        </button>
+      </div>
     </article>`;
 }
 
@@ -332,6 +348,20 @@ async function renderResults() {
 
   $("#summary").textContent = result.summary || "";
   const workflows = Array.isArray(result.workflows) ? result.workflows : [];
+
+  const newCount = workflows.filter((w) => (w.status || "new") === "new").length;
+  const banner = $("#new-workflow-banner");
+  if (banner) {
+    if (newCount > 0) {
+      banner.hidden = false;
+      banner.textContent = newCount === 1
+        ? "1 new workflow detected that isn't in your wiki yet. Save it below to start drift-tracking."
+        : `${newCount} new workflows detected that aren't in your wiki yet. Save the ones you want to keep below.`;
+    } else {
+      banner.hidden = true;
+    }
+  }
+
   $("#workflows").innerHTML = workflows.map((w, i) => renderWorkflowCard(w, i)).join("");
 
   $$(".copy-prompt-btn").forEach((btn) => {
@@ -352,6 +382,30 @@ async function renderResults() {
         console.error(err);
       }
     });
+  });
+
+  $$("#workflows .btn-save[data-save-index]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const idx = Number(btn.dataset.saveIndex);
+      const wf = workflows[idx];
+      if (!wf) return;
+      btn.disabled = true;
+      try {
+        await saveWorkflowToWiki(wf);
+        btn.textContent = "✓ Saved to wiki";
+        btn.classList.add("saved");
+        // Re-render so the tab badge + wiki tab reflect the new SOP.
+        await renderTabNav(VIEWS.RESULTS);
+      } catch (err) {
+        console.error("Save to wiki failed:", err);
+        btn.disabled = false;
+        btn.textContent = "Save failed — see console";
+      }
+    });
+  });
+
+  $$("#workflows [data-view-wiki]").forEach((btn) => {
+    btn.addEventListener("click", () => showTab("wiki"));
   });
 }
 
@@ -628,10 +682,7 @@ function attachWikiHandlers(savedWithStatus, newlyDetected) {
   });
 }
 
-async function handleSave(dismissKey, newlyDetected) {
-  const entry = newlyDetected.find((x) => `new:${x.workflow.name}` === dismissKey);
-  if (!entry) return;
-  const wf = entry.workflow;
+async function saveWorkflowToWiki(wf) {
   const sop = {
     id: (crypto.randomUUID && crypto.randomUUID()) || `sop-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     name: wf.name,
@@ -645,6 +696,13 @@ async function handleSave(dismissKey, newlyDetected) {
   const { [STORAGE_KEYS.WIKI]: wiki = [] } = await chrome.storage.local.get(STORAGE_KEYS.WIKI);
   wiki.push(sop);
   await chrome.storage.local.set({ [STORAGE_KEYS.WIKI]: wiki });
+  return sop;
+}
+
+async function handleSave(dismissKey, newlyDetected) {
+  const entry = newlyDetected.find((x) => `new:${x.workflow.name}` === dismissKey);
+  if (!entry) return;
+  await saveWorkflowToWiki(entry.workflow);
   dismissedIds.add(dismissKey); // prevent the same card from rendering again until re-detected
   await renderWiki();
 }
